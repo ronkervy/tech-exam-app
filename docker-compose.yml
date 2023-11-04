@@ -1,0 +1,48 @@
+version: "3"
+services:
+  mongo:
+    container_name: mongo
+    image: mongo:latest
+    ports:
+      - 27018:27017
+    networks:
+      - ump_net
+  mongo-exp:
+    image: mongo-express:latest
+    container_name: me_app
+    restart: unless-stopped
+    ports:
+      - 8083:8081
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+    networks:
+      - ump_net
+  frontend:
+    container_name: frontend_app
+    volumes:
+      - "./frontend/src/App.js:/app/src/App.js"
+    build:
+      context: ./frontend
+      dockerfile: dockerfile
+    ports:
+      - 3000:3000
+    networks:
+      -  ump_net
+    environment:
+      REACT_APP_BACKEND_URI: ${BACKEND_URI}
+  backend:
+    container_name: backend_app
+    volumes:
+      - "./backend:/app"
+      - "./backend/server.js:/app/server.js"
+    build:
+      context: ./backend
+      dockerfile: dockerfile
+    ports:
+      - 8000:8000
+    networks:
+      - ump_net
+networks:
+  ump_net:
+    name: ump_net
+
