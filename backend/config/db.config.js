@@ -9,4 +9,3 @@ mongoose.connect(`mongodb://mongo`,{
 })
 
 module.exports = mongoose.connection;
-
